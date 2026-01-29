@@ -23,7 +23,8 @@ async function postJson<TResponse>(
 type ChatMessage =
   | { role: "user"; text: string }
   | { role: "assistant"; response: RagResponse }
-  | { role: "assistant"; error: string };
+  | { role: "assistant"; error: string }
+  | { role: "assistant"; typing: true };
 
 export default function Home() {
   const [question, setQuestion] = useState<string>("");
@@ -58,7 +59,11 @@ export default function Home() {
     }
 
     setQuestion(""); // clear input after user sends (messaging UX)
-    setMessages((prev) => [...prev, { role: "user", text: q }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", text: q },
+      { role: "assistant", typing: true },
+    ]);
     queueMicrotask(scrollToBottom);
 
     setIsQuerying(true);
@@ -70,18 +75,24 @@ export default function Home() {
 
       if ("ok" in res) {
         setMessages((prev) => [
-          ...prev,
+          ...prev.filter((m) => !("typing" in m)),
           { role: "assistant", error: res.message ? `${res.error}: ${res.message}` : res.error },
         ]);
         queueMicrotask(scrollToBottom);
         return;
       }
 
-      setMessages((prev) => [...prev, { role: "assistant", response: res }]);
+      setMessages((prev) => [
+        ...prev.filter((m) => !("typing" in m)),
+        { role: "assistant", response: res },
+      ]);
       queueMicrotask(scrollToBottom);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
-      setMessages((prev) => [...prev, { role: "assistant", error: `Query failed: ${message}` }]);
+      setMessages((prev) => [
+        ...prev.filter((m) => !("typing" in m)),
+        { role: "assistant", error: `Query failed: ${message}` },
+      ]);
       queueMicrotask(scrollToBottom);
     } finally {
       setIsQuerying(false);
@@ -166,6 +177,8 @@ export default function Home() {
                       <div>{m.text}</div>
                     ) : "error" in m ? (
                       <div style={{ color: "#b00" }}>{m.error}</div>
+                    ) : "typing" in m ? (
+                      <div style={{ color: "var(--muted)" }}>Typing…</div>
                     ) : (
                       <div>
                         <div style={{ whiteSpace: "pre-wrap" }}>{m.response.answer}</div>
