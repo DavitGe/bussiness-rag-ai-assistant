@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Dark default theme (readability-first). */
+  --background: #0b0f14;
+  --foreground: #e5e7eb;
+  --muted: #9ca3af;
+  --panel: #111827;
+  --panel-2: #0f172a;
+  --border: #243244;
+  --input: #0b1220;
+  --user-bubble: #2563eb;
+  --assistant-bubble: #111827;
 }
 
 @theme inline {
@@ -12,12 +20,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Force a readable light theme for now (no dark mode). */
 
 body {
   background: var(--background);

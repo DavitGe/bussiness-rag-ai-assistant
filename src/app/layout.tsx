@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
+import { MessageProvider } from "@/components/MessageProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +29,48 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <MessageProvider>
+          <header
+            style={{
+              borderBottom: "1px solid var(--border)",
+              padding: "12px 16px",
+            }}
+          >
+            <nav
+              style={{
+                maxWidth: 920,
+                margin: "0 auto",
+                display: "flex",
+                gap: 12,
+                alignItems: "center",
+              }}
+            >
+              <Link
+                href="/"
+                style={{
+                  fontWeight: 600,
+                  color: "var(--foreground)",
+                  textDecoration: "none",
+                }}
+              >
+                Chat
+              </Link>
+              <Link
+                href="/ingest"
+                style={{ color: "var(--foreground)", textDecoration: "none" }}
+              >
+                Ingest
+              </Link>
+              <Link
+                href="/documents"
+                style={{ color: "var(--foreground)", textDecoration: "none" }}
+              >
+                Documents
+              </Link>
+            </nav>
+          </header>
+          <div>{children}</div>
+        </MessageProvider>
       </body>
     </html>
   );
